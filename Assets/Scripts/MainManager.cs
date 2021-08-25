@@ -18,10 +18,13 @@ public class MainManager : MonoBehaviour
     
     private bool m_GameOver = false;
 
+    public Text highScore;
+
     
     // Start is called before the first frame update
     void Start()
     {
+
         const float step = 0.6f;
         int perLine = Mathf.FloorToInt(4.0f / step);
         
@@ -34,7 +37,14 @@ public class MainManager : MonoBehaviour
                 var brick = Instantiate(BrickPrefab, position, Quaternion.identity);
                 brick.PointValue = pointCountArray[i];
                 brick.onDestroyed.AddListener(AddPoint);
+
+
+
             }
+
+
+            highScore.text = PlayerPrefs.GetInt("HighScore", 0).ToString();
+
         }
     }
 
@@ -66,6 +76,13 @@ public class MainManager : MonoBehaviour
     {
         m_Points += point;
         ScoreText.text = $"Score : {m_Points}";
+
+        if (m_Points > PlayerPrefs.GetInt("HighScore", 0))
+        { 
+        PlayerPrefs.SetInt("HighScore", m_Points);
+
+            highScore.text = m_Points.ToString();
+    }
     }
 
     public void GameOver()
@@ -73,4 +90,12 @@ public class MainManager : MonoBehaviour
         m_GameOver = true;
         GameOverText.SetActive(true);
     }
+
+    public void Reset()
+    {
+        PlayerPrefs.DeleteAll();
+        highScore.text = "0";
+    }
+
+
 }
